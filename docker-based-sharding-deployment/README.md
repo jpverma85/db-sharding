@@ -151,10 +151,11 @@ Before performing catalog container, review the following notes carefully:
   
 **Notes**
  * Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
- * Change /oradata/dbfiles/CATALOG based on your enviornment.
+ * Change `/oradata/dbfiles/CATALOG` based on your enviornment.
  * By default, sharding setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID enviornment variable.
+ * `oracle/database:19.3.0-ee` is the repository:tag for the Database Docker Image.
  * If you are planing to perform seed cloning to expedite the sharding setup using existing cold DB backup, you need to replace following `--name catalog oracle/database:19.3.0-ee` to `--name catalog oracle/database:19.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
-   * In this case, /oradata/dbfiles/CATALOG must contain the DB backup and it must not be in zipped format. E.g. /oradata/dbfiles/CATALOG/SEEDCDB where SEEDCDB is the cold backup and contains datafiles and PDB. 
+   * In this case, `/oradata/dbfiles/CATALOG` must contain the DB backup and it must not be in zipped format. E.g. `/oradata/dbfiles/CATALOG/SEEDCDB` where SEEDCDB is the cold backup and contains datafiles and PDB. 
 ```
 docker run -d --hostname oshard-catalog-0 \
  --dns-search=example.com \
@@ -173,9 +174,9 @@ docker run -d --hostname oshard-catalog-0 \
  --name catalog oracle/database:19.3.0-ee
  
     Mandatory Parameters:
-      COMMON_OS_PWD_FILE:       Specify the encrypted password file to be read inside the ontainer
-      PWD.key:                  Specify password key file to decrypt the encrypted password file and read the password
-      OP_TYPE:                  Specify the operation type. For Shards it has to be set to catalog.
+      COMMON_OS_PWD_FILE:       Specify the encrypted password file to be read inside the container
+      PWD_KEY:                  Specify password key file to decrypt the encrypted password file and read the password
+      OP_TYPE:                  Specify the operation type. For Catalog container, it has to be set to "catalog".
       DOMAIN:                   Specify the domain name
       ORACLE_SID:               CDB name
       ORACLE_PDB:               PDB name
@@ -188,13 +189,14 @@ docker run -d --hostname oshard-catalog-0 \
       OLD_ORACLE_PDB: Specify the OLD_ORACLE_PDB if you are performing db seed cloning using existing cold backup of Oracle DB.
 ```
 
-To check the catalog container/services creation logs, please tail docker logs. It will take 20 minutes to create the catalog container service.
+To check the catalog container/services creation logs, please tail docker logs. 
 
 ```
 docker logs -f catalog
 ```
+**NOTE:** It will take 20 minutes to create the catalog container service.
 
-**IMPORTANT:** The resulting images will be an image with the Oracle binaries installed. On first startup of the container a new database will be created, the following lines highlight when the Shard database is ready to be used:
+**IMPORTANT:** The resulting images will be an image with the Oracle binaries installed. On first startup of the container, a new database will be created. The following lines highlight when the Catalog database is ready to be used:
 
     ################################################
 	Oracle GSM Catalog Setup Completed Successfully!
@@ -212,7 +214,7 @@ chown -R 54321:54321 /oradata/dbfiles/ORCL1CDB
 ```
 
 **Notes**: 
- * Change the ownership for data volume `/oradata/dbfiles/ORCL1CDB` and `/oradata/dbfiles/ORCL2CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
+ * Change the ownership for data volume `/oradata/dbfiles/ORCL1CDB` and `/oradata/dbfiles/ORCL2CDB` exposed to shard container as it has to be writable by  "oracle" (uid: 54321) user inside the container.
  * If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instace Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
 
 ##### Shard1 Container
@@ -220,9 +222,10 @@ chown -R 54321:54321 /oradata/dbfiles/ORCL1CDB
 Before creating shard1 container, review the following notes carefully:  
 
 **Notes**
- * Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
- * Change /oradata/dbfiles/ORCL1CDB based on your enviornment.
+ * Change environment variable such as ORACLE_SID, ORACLE_PDB based on your environment.
+ * Change `/oradata/dbfiles/ORCL1CDB` based on your enviornment.
  * By default, sharding setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID enviornment variable.
+ * `oracle/database:19.3.0-ee` is the repository:tag for the Database Docker Image.
  * If you are planing to perform seed cloning to expedite the sharding setup using existing cold DB backup, you need to replace following `--name shard1 oracle/database:19.3.0-ee` to `--name shard1 oracle/database:19.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
    * In this case, `/oradata/dbfiles/ORCL1CDB` must contain the DB backup and it must not be zipped. E.g. `/oradata/dbfiles/ORCL1CDB/SEEDCDB` where `SEEDCDB` is the cold backup and contains datafiles and PDB.
 
@@ -245,7 +248,7 @@ docker run -d --hostname oshard1-0 \
  
    Mandatory Parameters:
       COMMON_OS_PWD_FILE:       Specify the encrypted password file to be read inside container
-      PWD.key:                  Specify password key file to decrypt the encrypted password file and read the password
+      PWD_KEY:                  Specify password key file to decrypt the encrypted password file and read the password
       OP_TYPE:                  Specify the operation type. For Shards it has to be set to primaryshard or standbyshard
       DOMAIN:                   Specify the domain name
       ORACLE_SID:               CDB name
@@ -272,6 +275,7 @@ Before creating shard1 container, review the following notes carefully:
  * Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
  * Change /oradata/dbfiles/ORCL2CDB based on your enviornment.
  * By default, sharding setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID enviornment variable.
+ * `oracle/database:19.3.0-ee` is the repository:tag for the Database Docker Image.
  * If you are planing to perform seed cloning to expedite the sharding setup using existing cold DB backup, you need to replace following `--name shard2 oracle/database:19.3.0-ee` to `--name shard2 oracle/database:19.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
    * In this case, `/oradata/dbfiles/ORCL2CDB` must contain the DB backup and it must not be zipped. E.g. `/oradata/dbfiles/ORCL2CDB/SEEDCDB` where `SEEDCDB` is the cold backup and contains datafiles and PDB.
 
@@ -294,7 +298,7 @@ docker run -d --hostname oshard2-0 \
   
      Mandatory Parameters:
       COMMON_OS_PWD_FILE:       Specify the encrypted password file to be read inside the container
-      PWD.key:                  Specify password key file to decrypt the encrypted password file and read the password
+      PWD_KEY:                  Specify password key file to decrypt the encrypted password file and read the password
       OP_TYPE:                  Specify the operation type. For Shards it has to be set to primaryshard or standbyshard
       DOMAIN:                   Specify the domain name
       ORACLE_SID:               CDB name
@@ -322,7 +326,7 @@ docker logs -f shard2
 	###############################################
 	
 #### Deploying GSM Container
-The Global Data Services framework consists of at least one global service manager, a Global Data Services catalog, and the GDS configuration databases. You need to create mountpoint on docker host to save gsm setup related file for Oracle Global Service Manager and expose as a volume to GSM container. This volume can be local on a docker host or exposed from your central storage. It contains a file system such as EXT4. During the setup of this README.md, we used /oradata/dbfiles/GSMDATA directory and exposed as volume to GSM container.
+The Global Data Services framework consists of at least one global service manager, a Global Data Services catalog, and the GDS configuration databases. You need to create mountpoint on docker host to save gsm setup related file for Oracle Global Service Manager and expose as a volume to GSM container. This volume can be local on a docker host or exposed from your central storage. It contains a file system such as EXT4. During the setup of this README.md, we used `/oradata/dbfiles/GSMDATA` directory and exposed as volume to GSM container.
 
 ##### Create Directory
 ```
@@ -392,9 +396,11 @@ chown -R 54321:54321 /oradata/dbfiles/GSMDATA
         **Notes**: 
            SERVICE[1-9]_PARAMS is in regex form, you can specify env parameter based on your enviornment such SERVICE1_PARAMS, SERVICE2_PARAMS.
            Each SERVICE[1-9]_PARAMS must have above key value pair. 
+	   
+        **Notes:**  `oracle/database-gsm:19.3.0` is the repository:tag for the GSM Docker Image.
            
       COMMON_OS_PWD_FILE:       Specify the encrypted password file to be read inside container
-      PWD.key:                  Specify password key file to decrypt the encrypted password file and read the password
+      PWD_KEY:                  Specify password key file to decrypt the encrypted password file and read the password
       OP_TYPE:                  Specify the operation type. For GSM it has to be set to gsm.
       DOMAIN:                   Domain of the container.
       MASTER_GSM:               Set value to "TRUE" if you want the GSM to be a master GSM. Otherwise, do not set it.
@@ -456,7 +462,8 @@ chown -R 54321:54321 /oradata/dbfiles/GSM2DATA
                                  key=catalog_name,       value=catalog name in GSM
                                  key=catalog_region,     value=specify comma separated region name for catalog db deployment
 ```
-
+        **Notes:**  `oracle/database-gsm:19.3.0` is the repository:tag for the GSM Docker Image.
+	
 To check the gsm2 container/services creation logs, please tail docker logs. It will take 2 minutes to create the gsm container service.
 
 ```
@@ -465,11 +472,9 @@ docker logs -f gsm2
 
 **IMPORTANT:** The resulting images will be an image with the Oracle GSM binaries installed. On first startup of the container a new GSM setup will be created, the following lines highlight when the GSM setup is ready to be used:
 
-```
     ##############################################
 	Oracle GSM Setup Completed Successfully!
 	###############################################
-```
 
 ## Support 
 
