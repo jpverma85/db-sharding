@@ -32,10 +32,8 @@ steps:
     timeoutInSeconds: 1200
     name: "Build container image"
     command: |
-      echo "OCI_PRIMARY_SOURCE_DIR=${OCI_PRIMARY_SOURCE_DIR}"
-      ls -lrt ${OCI_PRIMARY_SOURCE_DIR}
-      cd ${OCI_PRIMARY_SOURCE_DIR}/db-sharding/container-based-sharding-deployment/containerfiles
-      buildContainerImage.sh -v 23.5.0 -i
+      cd ${OCI_PRIMARY_SOURCE_DIR}/container-based-sharding-deployment/containerfiles
+      ./buildContainerImage.sh -v 23.5.0 -i
      
 outputArtifacts:
   - name: gsm-docker-image
