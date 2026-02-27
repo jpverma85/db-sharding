@@ -62,6 +62,7 @@ ENV GSM_BASE="/u01/app/oracle" \
     PYTHON3_FILE="/usr/bin/python3" \
     CHECKLIVENESS="checkLiveness.sh"
 # Use second ENV so that variable get substituted
+# hadolint ignore=DL3044
 ENV  INSTALL_SCRIPTS=$INSTALL_DIR/install \
      ORACLE_HOME=$GSM_HOME \
      ORACLE_BASE=$GSM_BASE \

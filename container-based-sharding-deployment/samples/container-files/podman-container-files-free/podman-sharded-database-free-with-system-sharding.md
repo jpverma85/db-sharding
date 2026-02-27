@@ -43,7 +43,7 @@ This setup initially involves deploying podman containers for:
 * Primary GSM 
 * Standby GSM
 
-**NOTE:** In the current Sample Oracle Globally Distributed Database Deployment, we have used Oracle 23ai FREE Database and GSM Podman Images.
+**NOTE:** In the current Sample Oracle Globally Distributed Database Deployment, we have used Oracle AI Database 26ai Free and Oracle 26ai GSM Container Images.
 
 ## Prerequisites
 
@@ -51,8 +51,12 @@ Before using this page to create a sample Oracle Globally Distributed Database, 
 
 Refer to the page [Oracle Database Free](https://www.oracle.com/database/free/) for the details of the Oracle Database FREE.
 
-**IMPORTANT:** 
-You can directly download the Oracle Single Instance Database Image with Oracle Globally Distributed Database Feature and the Global Service Manager image (GSM image) of Oracle 23ai FREE version from `container-registry.oracle.com` using the link `container-registry.oracle.com/database/free:latest` and `container-registry.oracle.com/database/gsm:latest` respectively.
+**IMPORTANT:**
+You can directly download the Oracle Single Instance Database Image with Oracle Globally Distributed Database Feature of Oracle AI Database 26ai Free version from `container-registry.oracle.com` using the link `container-registry.oracle.com/database/free:latest`.
+
+For GSM Image, you can download and use the Global Service Manager image (GSM image) of Oracle AI Database 26ai version from `container-registry.oracle.com` using the link `container-registry.oracle.com/database/gsm:latest`.
+
+In case you want to download container image of a particular version, you can change the tag accordingly.
 
 Before creating the GSM container, you need to build the catalog and shard containers. Execute the following steps to create containers for the deployment:
 
@@ -71,8 +75,8 @@ chown -R 54321:54321 /scratch/oradata/dbfiles/CATALOG
 
 **Notes:**
 
-* Change the ownership for data volume `/scratch/oradata/dbfiles/CATALOG` exposed to catalog container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
-* If this is not changed, then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
+- Change the ownership for data volume `/scratch/oradata/dbfiles/CATALOG` exposed to catalog container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
+- If this is not changed, then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
 
 ### Create Container
 
@@ -80,9 +84,9 @@ Before creating catalog container, review the following notes carefully:
 
 **Notes:**
 
-* Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
-* Change `/scratch/oradata/dbfiles/CATALOG` based on your enviornment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID enviornment variable.
+- Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
+- Change `/scratch/oradata/dbfiles/CATALOG` based on your enviornment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID enviornment variable.
 
 * If SELinux is enabled on podman host, then execute following-
 ```bash
@@ -286,7 +290,7 @@ podman run -d --hostname oshard-gsm1 \
 -e MASTER_GSM="TRUE" \
 --secret pwdsecret \
 --secret keysecret \
--v /scratch/scratch/oradata/dbfiles/GSMDATA:/opt/oracle/gsmdata \
+-v /scratch/oradata/dbfiles/GSMDATA:/opt/oracle/gsmdata \
 -v /opt/containers/shard_host_file:/etc/hosts \
 --privileged=false \
 --name gsm1 container-registry.oracle.com/database/gsm:latest
@@ -332,7 +336,6 @@ podman run -d --hostname oshard-gsm2 \
 -e CATALOG_PARAMS="catalog_host=oshard-catalog-0;catalog_db=CATCDB;catalog_pdb=CAT1PDB;catalog_port=1521;catalog_name=shardcatalog1;catalog_region=region1,region2;catalog_chunks=12" \
 -e SHARD1_PARAMS="shard_host=oshard1-0;shard_db=ORCL1CDB;shard_pdb=ORCL1PDB;shard_port=1521;shard_group=shardgroup1" \
 -e SHARD2_PARAMS="shard_host=oshard2-0;shard_db=ORCL2CDB;shard_pdb=ORCL2PDB;shard_port=1521;shard_group=shardgroup1" \
--e SHARD3_PARAMS="shard_host=oshard3-0;shard_db=ORCL3CDB;shard_pdb=ORCL3PDB;shard_port=1521;shard_group=shardgroup1" \
 -e SERVICE1_PARAMS="service_name=oltp_rw_svc;service_role=standby" \
 -e SERVICE2_PARAMS="service_name=oltp_ro_svc;service_role=standby" \
 -e GSM_TRACE_LEVEL="OFF" \
@@ -537,7 +540,7 @@ Once the shard is deleted from the Oracle Globally Distributed Database, you can
 
 If the deleted shard was "shard3", to remove its Podman Container, please use the below steps:
 
-- Stop and remove the Docker Container for shard3:
+- Stop and remove the Podman Container for shard3:
 
 ```bash
 podman stop shard3

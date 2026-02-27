@@ -87,6 +87,7 @@ ENV  GSM_BASE="/u01/app/oracle" \
      WORKDIR=$WORKDIR \
      CHECKLIVENESS="checkLiveness.sh"
 
+# hadolint ignore=DL3044
 ENV  INSTALL_SCRIPTS=$INSTALL_DIR/install \
      ORACLE_HOME=$GSM_HOME \
      ORACLE_BASE=$GSM_BASE \

@@ -1,6 +1,7 @@
 # Oracle Globally Distributed Database Containers using Oracle Database FREE Images on Podman
 
-In this installation guide, we deploy Oracle Globally Distributed Database Containers using Oracle Database 23ai FREE Images on Podman. This page provides detailed steps for various scenarios of Oracle Globally Distributed Database deployments using Oracle Database 23ai FREE Images using Podman Containers.
+In this installation guide, we deploy Oracle Globally Distributed Database Containers using Oracle AI Database 26ai Free Image on Podman. This page provides detailed steps for various scenarios of Oracle Globally Distributed Database deployments using Oracle AI Database 26ai Free Image using Podman Containers.
+
 - [Oracle Globally Distributed Database Containers using Oracle Database FREE Images on Podman](#oracle-globally-distributed-database-containers-using-oracle-database-free-images-on-podman)
   - [Prerequisites](#prerequisites)
   - [Network Management](#network-management)
@@ -19,12 +20,9 @@ In this installation guide, we deploy Oracle Globally Distributed Database Conta
 - [License](#license)
 - [Copyright](#copyright)
 
-
-
 ## Prerequisites
 
-You must complete all of the prerequisites before deploying an Oracle Globally Distributed Database using Podman Containers. These prerequisites include creating the Docker network, creating the encrypted file with secrets, and other steps required before deployment. 
-
+You must complete all of the prerequisites before deploying an Oracle Globally Distributed Database using Podman Containers. These prerequisites include creating the Docker network, creating the encrypted file with secrets, and other steps required before deployment.
 
 ### Network Management
 
@@ -88,7 +86,7 @@ Because Oracle Database Containers do not have root access to modify the `/etc/h
 
 **IMPORTANT:** Make sure the version of `openssl` in the Oracle Database and Oracle GSM images is compatible with the `openssl` version on the machine where you will run the openssl commands to generated the encrypted password file during the deployment.
 
-* Specify the secret volume for resetting database user passwords during catalog and shard setup. The secret volume can be a shared volume among all the containers
+- Specify the secret volume for resetting database user passwords during catalog and shard setup. The secret volume can be a shared volume among all the containers
 
   ```bash
   mkdir /opt/.secrets/
@@ -97,18 +95,21 @@ Because Oracle Database Containers do not have root access to modify the `/etc/h
   openssl rsa -in key.pem -out key.pub -pubout
   ```
 
-* Edit the `/opt/.secrets/pwdfile.txt` and seed the password. It will be a common password for all the database users. Execute following command:
+- Edit the `/opt/.secrets/pwdfile.txt` and seed the password. It will be a common password for all the database users. Execute following command:
 
   ```bash
   vi /opt/.secrets/pwdfile.txt
   ```
+
   **Note**: Enter your secure password in the above file and save the file.
 
-* After seeding password and saving the `/opt/.secrets/pwdfile.txt` file, run the following commands:
+- After seeding password and saving the `/opt/.secrets/pwdfile.txt` file, run the following commands:
+  
   ```bash
   openssl pkeyutl -in /opt/.secrets/pwdfile.txt -out /opt/.secrets/pwdfile.enc -pubin -inkey /opt/.secrets/key.pub -encrypt
   rm -rf /opt/.secrets/pwdfile.txt
   ```
+
   Oracle recommends using Podman secrets inside the containers. Run the following commands to create the Podman secrets:
   
   ```bash
@@ -124,12 +125,14 @@ Because Oracle Database Containers do not have root access to modify the `/etc/h
 **Note:** This password and key secrets are used for the initial Oracle Globally Distributed Database topology setup. After the Oracle Globally Distributed Database topology setup is complete, you must change the topology passwords based on your enviornment.
 
 ## SELinux Configuration on Podman Host
+
 To run Podman containers in an environment with Security-Enhanced Linux (SELinux) enabled, you must configure an SELinux policy for the containers. To check if your SELinux is enabled or not, run the `getenforce` command.
-With SELinux, you must set a policy to implement permissions for your containers. If you do not configure a policy module for your containers, then they can end up restarting indefinitely or generate other permission errors. You must add all Podman host nodes for your cluster to the policy module `shard-podman`, by installing the necessary packages and creating a type enforcement file (designated by the `.te` suffix) to build the policy, and load the policy into the system. 
+With SELinux, you must set a policy to implement permissions for your containers. If you do not configure a policy module for your containers, then they can end up restarting indefinitely or generate other permission errors. You must add all Podman host nodes for your cluster to the policy module `shard-podman`, by installing the necessary packages and creating a type enforcement file (designated by the `.te` suffix) to build the policy, and load the policy into the system.
 
-In the following example, the Podman host `podman-host` is configured in the SELinux policy module `shard-podman`: 
+In the following example, the Podman host `podman-host` is configured in the SELinux policy module `shard-podman`:
 
-Copy [shard-podman.te](../../../containerfiles/shard-podman.te) to `/var/opt` folder in your host and then run the following commands-
+Copy [shard-podman.te](../../../containerfiles/shard-podman.te) to `/var/opt` folder in your host and then run the following commands:
+
 ```bash
 cd /var/opt
 make -f /usr/share/selinux/devel/Makefile shard-podman.pp
@@ -139,7 +142,7 @@ semodule -l | grep shard-pod
 
 ## Oracle Database FREE Images
 
-While using Oracle Database FREE Images, be aware of the following restrictions, defaults, and options:
+While using Oracle Database FREE Images to deploy Database Containers, be aware of the following restrictions, defaults, and options:
 
 - There is a limit of 2 CPUs for foreground processes, 2 GB of RAM and 12 GB of user data on disk.
 - The Total number of chunks for FREE Database defaults to 12 if `CATALOG_CHUNKS` value is not specified. This default value is determined with consideration of the 12 GB limit of user data on disk for Oracle Database FREE.
@@ -150,7 +153,6 @@ While using Oracle Database FREE Images, be aware of the following restrictions,
 - Additional PDBs can be specified using the parameter `ORACLE_FREE_PDB`
 - You can specify a database unique name that is different from `ORACLE_SID` (which must be `FREE`) by using the parameter `DB_UNIQUE_NAME`
 
-
 ## Deploy Oracle Globally Distributed Database Containers using Oracle Database FREE Images
 
 Refer to the relevant section depending on whether you want to deploy the Oracle Globally Distributed Database using System-Managed Sharding, System-Managed Sharding with RAFT Replication enabled, or User-Defined Sharding.
@@ -159,12 +161,11 @@ Refer to the relevant section depending on whether you want to deploy the Oracle
 
 Refer to [Sample Oracle Globally Distributed Database with System-Managed Sharding deployed manually using Podman Containers and Oracle Database FREE Images](./podman-sharded-database-free-with-system-sharding.md) to deploy a sample Oracle Globally Distributed Database with System-Managed sharding using podman containers and Oracle Database FREE Images.
 
-
 ### Deploy Oracle Globally Distributed Database with System-Managed Sharding with RAFT Replication Enabled using Oracle Database FREE Images
 
 Refer to [Sample Oracle Globally Distributed Database with System-Managed Sharding with RAFT Replication enabled deployed manually using Podman Containers and Oracle Database FREE Images](./podman-sharded-database-free-with-system-sharding-with-snr-raft-enabled.md) to deploy a sample Oracle Globally Distributed Database with System-Managed sharding with RAFT Replication enabled using Podman containers and Oracle Database FREE Images.
 
-**NOTE:** The RAFT Replication Feature is available only for the Oracle Database 23ai FREE.
+**NOTE:** The RAFT Replication Feature is available only for the Oracle Database 23ai onwards.
 
 ### Deploy Oracle Globally Distributed Database with User-Defined Sharding using Oracle Database FREE Images
 

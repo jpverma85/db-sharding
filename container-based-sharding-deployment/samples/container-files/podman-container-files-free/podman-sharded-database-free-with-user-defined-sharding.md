@@ -18,7 +18,7 @@ This page covers the steps to manually deploy a sample Oracle Globally Distribut
   - [Create Directory for Standby GSM Container](#create-directory-for-standby-gsm-container)
   - [Create Standby GSM Container](#create-standby-gsm-container)
 - [Scale-out an existing Oracle Globally Distributed Database](#scale-out-an-existing-oracle-globally-distributed-database)
-  - [Complete the prerequisite steps before creating Podman Container for new shard](#complete-the-prerequisite-steps-before-creating-podman-container-for-new-shard) 
+  - [Complete the prerequisite steps before creating Podman Container for new shard](#complete-the-prerequisite-steps-before-creating-podman-container-for-new-shard)
   - [Create Podman Container for new shard](#create-podman-container-for-new-shard)
   - [Add the new shard Database to the existing Oracle Globally Distributed Database](#add-the-new-shard-database-to-the-existing-oracle-globally-distributed-database)
   - [Deploy the new shard](#deploy-the-new-shard)
@@ -27,24 +27,23 @@ This page covers the steps to manually deploy a sample Oracle Globally Distribut
   - [Confirm the shard to be deleted is present in the list of shards in the Oracle Globally Distributed Database](#confirm-the-shard-to-be-deleted-is-present-in-the-list-of-shards-in-the-oracle-globally-distributed-database)
   - [Move the chunks out of the shard database which you want to delete](#move-the-chunks-out-of-the-shard-database-which-you-want-to-delete)
   - [Delete the shard database from the Oracle Globally Distributed Database](#delete-the-shard-database-from-the-oracle-globally-distributed-database)
-  - [Confirm the shard has been successfully deleted from the Oracle Globally Distributed Database](#confirm-the-shard-has-been-successfully-deleted-from-the-oracle-globally-distributed-database) 
+  - [Confirm the shard has been successfully deleted from the Oracle Globally Distributed Database](#confirm-the-shard-has-been-successfully-deleted-from-the-oracle-globally-distributed-database)
   - [Remove the Podman Container](#remove-the-podman-container)
 - [Environment Variables Explained](#environment-variables-explained)
 - [Support](#support)
 - [License](#license)
 - [Copyright](#copyright)
 
-
 ## Setup Details
 
 This setup involves deploying podman containers for:
 
-* Catalog Database
-* Two Shard Databases
-* Primary GSM 
-* Standby GSM
+- Catalog Database
+- Two Shard Databases
+- Primary GSM
+- Standby GSM
 
-**NOTE:** In the current Sample Oracle Globally Distributed Database Deployment, we have used Oracle 23ai FREE Database and GSM Podman Images.
+**NOTE:** In the current Sample Oracle Globally Distributed Database Deployment, we have used Oracle AI Database 26ai Free and Oracle 26ai GSM Container Images.
 
 ## Prerequisites
 
@@ -52,8 +51,12 @@ Before using this page to create a sample Oracle Globally Distributed Database, 
 
 Refer to the page [Oracle Database Free](https://www.oracle.com/database/free/) for the details of the Oracle Database FREE.
 
-**IMPORTANT:** 
-You can directly download the Oracle Single Instance Database Image with Oracle Globally Distributed Database Feature and the Global Service Manager image (GSM image) of Oracle 23ai FREE version from `container-registry.oracle.com` using the link `container-registry.oracle.com/database/free:latest` and `container-registry.oracle.com/database/gsm:latest` respectively.
+**IMPORTANT:**
+You can directly download the Oracle Single Instance Database Image with Oracle Globally Distributed Database Feature of Oracle AI Database 26ai Free version from `container-registry.oracle.com` using the link `container-registry.oracle.com/database/free:latest`.
+
+For GSM Image, you can download and use the Global Service Manager image (GSM image) of Oracle AI Database 26ai version from `container-registry.oracle.com` using the link `container-registry.oracle.com/database/gsm:latest`.
+
+In case you want to download container image of a particular version, you can change the tag accordingly.
 
 Before creating the GSM container, you need to build the catalog and shard containers. Execute the following steps to create containers for the deployment:
 
@@ -72,8 +75,8 @@ chown -R 54321:54321 /scratch/oradata/dbfiles/CATALOG
 
 **Notes:**:
 
-* Change the ownership for data volume `/scratch/oradata/dbfiles/CATALOG` exposed to catalog container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
-* If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
+- Change the ownership for data volume `/scratch/oradata/dbfiles/CATALOG` exposed to catalog container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
+- If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
 
 ### Create Container
 
@@ -81,11 +84,12 @@ Before creating catalog container, review the following notes carefully:
 
 **Notes:**
 
-* Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
-* Change `/scratch/oradata/dbfiles/CATALOG` based on your enviornment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID enviornment variable.
+- Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
+- Change `/scratch/oradata/dbfiles/CATALOG` based on your enviornment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID enviornment variable.
 
-  * If SELinux is enabled on podman host, then execute the following-
+  - If SELinux is enabled on podman host, then execute the following-
+
   ```bash
   semanage fcontext -a -t container_file_t /scratch/oradata/dbfiles/CATALOG
   restorecon -v /scratch/oradata/dbfiles/CATALOG
@@ -123,7 +127,7 @@ podman logs -f catalog
 ```
 
 **IMPORTANT:** The Database Container Image used in this case is having the Oracle Database binaries installed. On first startup of the container, a new database will be created and the following lines highlight when the Catalog database is ready to be used:
-     
+
 ```bash
 ==============================================
       GSM Catalog Setup Completed
@@ -143,7 +147,8 @@ chown -R 54321:54321 /scratch/oradata/dbfiles/ORCL1CDB
 chown -R 54321:54321 /scratch/oradata/dbfiles/ORCL2CDB
 ```
 
-If SELinux is enabled on podman host, then execute the following-
+If SELinux is enabled on podman host, then execute the following:
+
 ```bash
 semanage fcontext -a -t container_file_t /scratch/oradata/dbfiles/ORCL1CDB
 restorecon -v /scratch/oradata/dbfiles/ORCL1CDB
@@ -153,8 +158,8 @@ restorecon -v /scratch/oradata/dbfiles/ORCL2CDB
 
 **Notes:**:
 
-* Change the ownership for data volume `/scratch/oradata/dbfiles/ORCL1CDB` and `/scratch/oradata/dbfiles/ORCL2CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
-* If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instace Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
+- Change the ownership for data volume `/scratch/oradata/dbfiles/ORCL1CDB` and `/scratch/oradata/dbfiles/ORCL2CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
+- If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instace Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
 
 ### Shard1 Container
 
@@ -162,9 +167,9 @@ Before creating shard1 container, review the following notes carefully:
 
 **Notes:**
 
-* Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
-* Change `/scratch/oradata/dbfiles/ORCL1CDB` based on your environment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID environment variable.
+- Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
+- Change `/scratch/oradata/dbfiles/ORCL1CDB` based on your environment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID environment variable.
 
 ```bash
 podman run -d --hostname oshard1-0 \
@@ -201,9 +206,9 @@ Before creating shard1 container, review the following notes carefully:
 
 **Notes:**
 
-* Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
-* Change `/scratch/oradata/dbfiles/ORCL2CDB` based on your environment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID environment variable.
+- Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
+- Change `/scratch/oradata/dbfiles/ORCL2CDB` based on your environment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID environment variable.
 
 ```bash
 podman run -d --hostname oshard2-0 \
@@ -242,7 +247,7 @@ podman logs -f shard2
 ==============================================
       GSM Shard Setup Completed
 ==============================================
-``` 
+```
 
 ## Deploying GSM Container
 
@@ -255,7 +260,8 @@ mkdir -p /scratch/oradata/dbfiles/GSMDATA
 chown -R 54321:54321 /scratch/oradata/dbfiles/GSMDATA
 ```
 
-If SELinux is enabled on podman host, then execute the following-
+If SELinux is enabled on podman host, then execute the following:
+
 ```bash
 semanage fcontext -a -t container_file_t /scratch/oradata/dbfiles/GSMDATA
 restorecon -v /scratch/oradata/dbfiles/GSMDATA
@@ -270,7 +276,7 @@ podman run -d --hostname oshard-gsm1 \
 --ip=10.0.20.100 \
 -e DOMAIN=example.com \
 -e SHARD_DIRECTOR_PARAMS="director_name=sharddirector1;director_region=region1;director_port=1522" \
--e CATALOG_PARAMS="catalog_host=oshard-catalog-0;catalog_db=CATCDB;catalog_pdb=CAT1PDB;catalog_port=1521;catalog_name=shardcatalog1;catalog_region=region1,region2;sharding_type=USER;shard_space=shardspace1,shardspace2;"     \
+-e CATALOG_PARAMS="catalog_host=oshard-catalog-0;catalog_db=CATCDB;catalog_pdb=CAT1PDB;catalog_port=1521;catalog_name=shardcatalog1;catalog_region=region1,region2;sharding_type=USER;shard_space=shardspace1,shardspace2"     \
 -e SHARD1_PARAMS="shard_host=oshard1-0;shard_db=ORCL1CDB;shard_pdb=ORCL1PDB;shard_port=1521;shard_space=shardspace1;deploy_as=primary;shard_region=region1" \
 -e SHARD2_PARAMS="shard_host=oshard2-0;shard_db=ORCL2CDB;shard_pdb=ORCL2PDB;shard_port=1521;shard_space=shardspace2;deploy_as=primary;shard_region=region2" \
 -e SERVICE1_PARAMS="service_name=oltp_rw_svc;service_role=primary" \
@@ -283,7 +289,7 @@ podman run -d --hostname oshard-gsm1 \
 -e MASTER_GSM="TRUE" \
 --secret pwdsecret \
 --secret keysecret \
--v /scratch/scratch/oradata/dbfiles/GSMDATA:/opt/oracle/gsmdata \
+-v /scratch/oradata/dbfiles/GSMDATA:/opt/oracle/gsmdata \
 -v /opt/containers/shard_host_file:/etc/hosts \
 --privileged=false \
 --name gsm1 container-registry.oracle.com/database/gsm:latest
@@ -307,7 +313,9 @@ You need standby GSM container to serve the connection when master GSM fails.
 mkdir -p /scratch/oradata/dbfiles/GSM2DATA
 chown -R 54321:54321 /scratch/oradata/dbfiles/GSM2DATA
 ```
+
 If SELinux is enabled on podman host, then execute the following-
+
 ```bash
 semanage fcontext -a -t container_file_t /scratch/oradata/dbfiles/GSM2DATA
 restorecon -v /scratch/oradata/dbfiles/GSM2DATA
@@ -339,6 +347,7 @@ podman run -d --hostname oshard-gsm2 \
 --privileged=false \
 --name gsm2 container-registry.oracle.com/database/gsm:latest
 ```
+
 **Note:** Change environment variables such as DOMAIN, CATALOG_PARAMS, COMMON_OS_PWD_FILE and PWD_KEY according to your environment.
 
 To check the gsm2 container/services creation logs, please tail podman logs. It will take 2 minutes to create the gsm container service.
@@ -377,7 +386,9 @@ Create the required directories for the new shard (shard3 in this case) containe
 mkdir -p /scratch/oradata/dbfiles/ORCL3CDB
 chown -R 54321:54321 /scratch/oradata/dbfiles/ORCL3CDB
 ```
+
 If SELinux is enabled on podman host, then execute the following-
+
 ```bash
 semanage fcontext -a -t container_file_t /scratch/oradata/dbfiles/ORCL3CDB
 restorecon -v /scratch/oradata/dbfiles/ORCL3CDB
@@ -385,8 +396,8 @@ restorecon -v /scratch/oradata/dbfiles/ORCL3CDB
 
 **Notes:**:
 
-* Change the ownership for data volume `/scratch/oradata/dbfiles/ORCL3CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
-* If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instace Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
+- Change the ownership for data volume `/scratch/oradata/dbfiles/ORCL3CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
+- If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instace Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
 
 ### Create Podman Container for new shard
 
@@ -394,9 +405,9 @@ Before creating new shard (shard3 in this case) container, review the following 
 
 **Notes:**
 
-* Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
-* Change `/scratch/oradata/dbfiles/ORCL3CDB` based on your environment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID environment variable.
+- Change environment variable such as ORACLE_FREE_PDB, DB_UNIQUE_NAME based on your env.
+- Change `/scratch/oradata/dbfiles/ORCL3CDB` based on your environment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/oradata` based on ORACLE_SID environment variable.
 
 ```bash
 podman run -d --hostname oshard3-0 \
@@ -438,11 +449,13 @@ podman logs -f shard3
 ### Add the new shard Database to the existing Oracle Globally Distributed Database
 
 Use the below command to add the new shard3:
+
 ```bash
 podman exec -it gsm1 python /opt/oracle/scripts/sharding/scripts/main.py --addshard="shard_host=oshard3-0;shard_db=ORCL3CDB;shard_pdb=ORCL3PDB;shard_port=1521;shard_space=shardspace3;shard_region=region3"
 ```
 
 Use the below command to check the status of the newly added shard:
+
 ``` bash
 podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config shard
 ```
@@ -456,6 +469,7 @@ podman exec -it gsm1 python /opt/oracle/scripts/sharding/scripts/main.py --deplo
 ```
 
 Use the below command to check the status of the newly added shard and the chunks distribution:
+
 ```bash
 podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config shard
 
@@ -471,11 +485,13 @@ podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2
 ```
 
 Example: If you want to move the chunk with chunk id `3` from source shard `ORCL1CDB_ORCL1PDB` to target shard `ORCL3CDB_ORCL3PDB`, then you can use the below command:
+
 ```bash
 podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl MOVE CHUNK -CHUNK 3 -SOURCE ORCL1CDB_ORCL1PDB -TARGET ORCL3CDB_ORCL3PDB
 ```
 
 Use the below command to check the status of the chunks distribution:
+
 ```bash
 podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config chunks
 ```
@@ -489,16 +505,15 @@ If you want to Scale-in an existing Oracle Globally Distributed Database by remo
 - Delete the shard database from the Oracle Globally Distributed Database
 - Confirm the shard has been successfully deleted from the Oracle Globally Distributed Database
 
-
 ### Confirm the shard to be deleted is present in the list of shards in the Oracle Globally Distributed Database
 
 Use the below commands to check the status of the shard which you want to delete and status of chunks present in this shard:
+
 ```bash
 podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config shard
 
 podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config chunks
 ```
-
 
 ### Move the chunks out of the shard database which you want to delete
 
@@ -509,6 +524,7 @@ podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2
 ```
 
 Example: If you want to move the chunk with chunk id `3` from source shard `ORCL3CDB_ORCL3PDB` to target shard `ORCL1CDB_ORCL1PDB`, then you can use the below command:
+
 ```bash
 podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl MOVE CHUNK -CHUNK 3 -SOURCE ORCL3CDB_ORCL3PDB -TARGET ORCL1CDB_ORCL1PDB
 ```
@@ -516,21 +532,22 @@ podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2
 **NOTE:** To move more than 1 chunk, you can specify comma separated chunk ids.
 
 After moving the chunks out, use the below command to confirm there is no chunk present in the shard database which you want to delete:
+
 ```bash
 podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config chunks
 ```
 
-**NOTE:** You will need to wait for some time for all the chunks to move out of the shard database which you want to delete. 
+**NOTE:** You will need to wait for some time for all the chunks to move out of the shard database which you want to delete.
 
 ### Delete the shard database from the Oracle Globally Distributed Database
 
 Once you have confirmed that no chunk is present in the shard to be deleted in earlier step, you can use the below command to delete that shard(shard3 in this case):
+
 ```bash
 podman exec -it gsm1 python /opt/oracle/scripts/sharding/scripts/main.py --deleteshard="shard_host=oshard3-0;shard_db=ORCL3CDB;shard_pdb=ORCL3PDB;shard_port=1521;shard_space=shardspace3;shard_region=region3"
 ```
 
 **NOTE:** In this case, `oshard3-0`, `ORCL3CDB` and `ORCL3PDB` are the names of host, CDB and PDB for the shard3 respectively.
-
 
 ### Confirm the shard has been successfully deleted from the Oracle Globally Distributed Database
 
@@ -544,11 +561,11 @@ podman exec -it gsm1 $(podman exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2
 
 ### Remove the Podman Container
 
-Once the shard is deleted from the Oracle Globally Distributed Database, you can remove the Podman Container which was deployed earlier for the deleted shard database. 
+Once the shard is deleted from the Oracle Globally Distributed Database, you can remove the Podman Container which was deployed earlier for the deleted shard database.
 
 If the deleted shard was `shard3`, to remove its Podman Container, please use the below steps:
 
-- Stop and remove the Docker Container for shard3:
+- Stop and remove the Podman Container for shard3:
 
 ```bash
 podman stop shard3
@@ -563,50 +580,73 @@ rm -rf /scratch/oradata/dbfiles/ORCL3CDB
 
 ## Environment Variables Explained
 
-**For catalog, shard containers-**
-| Parameter                  | Description                                                                                                    | Mandatory/Optional |
-|----------------------------|----------------------------------------------------------------------------------------------------------------|---------------------|
-| COMMON_OS_PWD_FILE         | Specify the podman secret for the password file to be read inside the container                                | Mandatory          |
-| PWD_KEY                    | Specify the podman secret for the password key file to decrypt the encrypted password file and read the password | Mandatory          |
-| OP_TYPE                    | Specify the operation type. For Shards it has to be set to primaryshard or standbyshard                         | Mandatory          |
-| DOMAIN                     | Specify the domain name                                                                                        | Mandatory          |
-| ORACLE_SID                 | CDB name which has to be "FREE" for Oracle Database FREE                                                       | Mandatory          |
-| ORACLE_PDB                 | PDB name which has to be "FREEPDB1" for Oracle Database FREE                                                   | Mandatory          |
-| ORACLE_FREE_PDB            | PDB name which you want to create for the setup                                                                | Mandatory          |
-| DB_UNIQUE_NAME             | DB_UNIQUE_NAME name which you want to set                                                                      | Mandatory          |
-| CUSTOM_SHARD_SCRIPT_DIR    | Specify the location of custom scripts which you want to run after setting up shard setup.                     | Optional           |
-| CUSTOM_SHARD_SCRIPT_FILE   | Specify the file name that must be available on CUSTOM_SHARD_SCRIPT_DIR location to be executed after shard db setup. | Optional           |
-| CLONE_DB                   | Specify value "true" if you want to avoid db creation and clone it from cold backup of existing Oracle DB. This DB must not have shard setup. Shard script will look for the backup at /opt/oracle/oradata. | Optional           |
-| OLD_ORACLE_SID             | Specify the OLD_ORACLE_SID if you are performing db seed cloning using existing cold backup of Oracle DB.     | Optional           |
-| OLD_ORACLE_PDB             | Specify the OLD_ORACLE_PDB if you are performing db seed cloning using existing cold backup of Oracle DB.       | Optional           |
+**For catalog, shard containers:**
 
-**For GSM Containers-**
+| Parameter                  | Description                                                                                                              | Mandatory/Optional  |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------|---------------------|
+| COMMON_OS_PWD_FILE         | Specify the podman secret for the password file to be read inside the container                                          | Mandatory           |
+| PWD_KEY                    | Specify the podman secret for the password key file to decrypt the encrypted password file and read the password         | Mandatory           |
+| OP_TYPE                    | Specify the operation type. For Shards it has to be set to primaryshard or standbyshard                                  | Mandatory           |
+| DOMAIN                     | Specify the domain name                                                                                                  | Mandatory           |
+| ORACLE_SID                 | CDB name which has to be "FREE" for Oracle Database FREE                                                                 | Mandatory           |
+| ORACLE_PDB                 | PDB name which has to be "FREEPDB1" for Oracle Database FREE                                                             | Mandatory           |
+| ORACLE_FREE_PDB            | PDB name which you want to create for the setup                                                                          | Mandatory           |
+| DB_NAME                    | CDB name                                                                                                                 | Mandatory           |
+| DB_UNIQUE_NAME             | DB_UNIQUE_NAME name which you want to set                                                                                | Mandatory           |
+| ORACLE_PDB_NAME            | PDB name                                                                                                                 | Mandatory           |
+| CRS_GPC                    | Set to true along with OP_TYPE to use the Oracle Restart option for Catalog and Shard Database Containers                | Mandatory           |
+| CRS_RACDB                  | Set to true along with OP_TYPE to use the Oracle RAC Database option for Catalog and Shard Database Containers           | Mandatory           |
+| CUSTOM_SHARD_SCRIPT_DIR    | Specify the location of custom scripts which you want to run after setting up shard setup.                               | Optional            |
+| CUSTOM_SHARD_SCRIPT_FILE   | Specify the file name that must be available on CUSTOM_SHARD_SCRIPT_DIR location to be executed after shard db setup.    | Optional            |
+| CLONE_DB                   | Specify value "true" if you want to avoid db creation and clone it from cold backup of existing Oracle DB.               | Optional            |
+|                            | This DB must not have shard setup. Shard script will look for the backup at /opt/oracle/oradata.                         |                     |
+| OLD_ORACLE_SID             | Specify the OLD_ORACLE_SID if you are performing db seed cloning using existing cold backup of Oracle DB.                | Optional            |
+| OLD_ORACLE_PDB             | Specify the OLD_ORACLE_PDB if you are performing db seed cloning using existing cold backup of Oracle DB.                | Optional            |
 
-| Parameter                  | Description                                                                                                    | Mandatory/Optional |
-|----------------------------|----------------------------------------------------------------------------------------------------------------|---------------------|
-| CATALOG_SETUP              | Accept True. if set then , it will only restrict till catalog connection and setup.                            | Mandatory          |
-| CATALOG_PARAMS             | Accept key value pair separated by semicolon e.g. key1=value1;key2=value2 for following key=value pairs: key=catalog_host, value=catalog hostname; key=catalog_db, value=catalog cdb name; key=catalog_pdb, value=catalog pdb name; key=catalog_port, value=catalog db port name; key=catalog_name, value=catalog name in GSM; key=catalog_region, value=specify comma separated region name for catalog db deployment | Mandatory          |
-| SHARD_DIRECTOR_PARAMS      | Accept key value pair separated by semicolon e.g. key1=value1;key2=value2 for following key=value pairs: key=director_name, value=shard director name; key=director_region, value=shard director region; key=director_port, value=shard director port | Mandatory          |
-| SHARD[1-9]_PARAMS          | Accept key value pair separated by semicolon e.g. key1=value1;key2=value2 for following key=value pairs: key=shard_host, value=shard hostname key=shard_db, value=shard cdb name key=shard_pdb, value=shard pdb name key=shard_port, value=shard db port key=shard_space, value=shard space name key=deploy_as, value=primary or standby key=shard_region, value=region name | Mandatory          |
-| SERVICE[1-9]_PARAMS        | Accept key value pair separated by semicolon e.g. key1=value1;key2=value2 for following key=value pairs: key=service_name, value=service name; key=service_role, value=service role e.g. primary or physical_standby | Mandatory          |
-| GSM_TRACE_LEVEL            | Specify tacing level for the GSM(Specify USER or ADMIN or SUPPORT or OFF, default value as OFF)                | Optional          |
-| COMMON_OS_PWD_FILE         | Specify the encrypted password file to be read inside container                                                  | Mandatory          |
-| PWD_KEY                    | Specify the podman secret for the password key file to decrypt the encrypted password file and read the password | Mandatory          |
-| OP_TYPE                    | Specify the operation type. For GSM it has to be set to gsm.                                                     | Mandatory          |
-| DOMAIN                     | Domain of the container.                                                                                         | Mandatory          |
-| MASTER_GSM                 | Set value to "TRUE" if you want the GSM to be a master GSM. Otherwise, do not set it.                            | Mandatory          |
-| SAMPLE_SCHEMA              | Specify a value to "DEPLOY" if you want to deploy sample app schema in catalog DB during GSM setup.              | Optional           |
-| CUSTOM_SHARD_SCRIPT_DIR   | Specify the location of custom scripts that you want to run after setting up GSM.                                 | Optional           |
-| CUSTOM_SHARD_SCRIPT_FILE  | Specify the file name which must be available on CUSTOM_SHARD_SCRIPT_DIR location to be executed after GSM setup. | Optional           |
-| BASE_DIR                   | Specify BASE_DIR if you want to change the base location of the scripts to setup GSM.                            | Optional           |
-| SCRIPT_NAME                | Specify the script name which will be executed from BASE_DIR. Default set to main.py.                            | Optional           |
-| EXECUTOR                   | Specify the script executor such as /bin/python or /bin/bash. Default set to /bin/python.                        | Optional           |
+**For GSM Containers:**
+
+| Parameter                  | Description                                                                                                              | Mandatory/Optional  |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------|---------------------|
+| CATALOG_SETUP              | Accept True. if set then , it will only restrict till catalog connection and setup.                                      | Mandatory           |
+| CATALOG_PARAMS             | Accept key value pair separated by semicolon e.g. key1=value1;key2=value2 for following key=value pairs:                 | Mandatory           |
+|                            |   - key=catalog_host, value=catalog hostname                                                                             |                     |
+|                            |   - key=catalog_db, value=catalog cdb name                                                                               |                     |
+|                            |   - key=catalog_pdb, value=catalog pdb name                                                                              |                     |
+|                            |   - key=catalog_port, value=catalog db port name                                                                         |                     |
+|                            |   - key=catalog_name, value=catalog name in GSM                                                                          |                     |
+|                            |   - key=catalog_region, value=specify comma separated region name for catalog db deployment                              |                     |
+| SHARD_DIRECTOR_PARAMS      | Accept key value pair separated by semicolon e.g. key1=value1;key2=value2 for following key=value pairs:                 | Mandatory           |
+|                            |   - key=director_name, value=shard director name                                                                         |                     |
+|                            |   - key=director_region, value=shard director region                                                                     |                     |
+|                            |   - key=director_port, value=shard director port                                                                         |                     |
+| SHARD[1-9]_PARAMS          | Accept key value pair separated by semicolon e.g. key1=value1;key2=value2 for following key=value pairs:                 | Mandatory           |
+|                            |   - key=shard_host, value=shard hostname                                                                                 |                     |
+|                            |   - key=shard_db, value=shard cdb name                                                                                   |                     |
+|                            |   - key=shard_pdb, value=shard pdb name                                                                                  |                     |
+|                            |   - key=shard_port, value=shard db port                                                                                  |                     |
+|                            |   - key=shard_space, value=shard space name                                                                              |                     |
+|                            |   - key=deploy_as, value=primary or standby                                                                              |                     |
+|                            |   - key=shard_region, value=region name                                                                                  |                     |
+| SERVICE[1-9]_PARAMS        | Accept key value pair separated by semicolon e.g. key1=value1;key2=value2 for following key=value pairs:                 | Mandatory           |
+|                            |   - key=service_name, value=service name                                                                                 |                     |
+|                            |   - key=service_role, value=service role e.g. primary or physical_standby                                                |                     |
+| GSM_TRACE_LEVEL            | Specify tacing level for the GSM(Specify USER or ADMIN or SUPPORT or OFF, default value as OFF)                          | Optional            |
+| COMMON_OS_PWD_FILE         | Specify the encrypted password file to be read inside container                                                          | Mandatory           |
+| PWD_KEY                    | Specify the podman secret for the password key file to decrypt the encrypted password file and read the password         | Mandatory           |
+| OP_TYPE                    | Specify the operation type. For GSM it has to be set to gsm.                                                             | Mandatory           |
+| DOMAIN                     | Domain of the container.                                                                                                 | Mandatory           |
+| MASTER_GSM                 | Set value to "TRUE" if you want the GSM to be a master GSM. Otherwise, do not set it.                                    | Mandatory           |
+| SAMPLE_SCHEMA              | Specify a value to "DEPLOY" if you want to deploy sample app schema in catalog DB during GSM setup.                      | Optional            |
+| CUSTOM_SHARD_SCRIPT_DIR    | Specify the location of custom scripts that you want to run after setting up GSM.                                        | Optional            |
+| CUSTOM_SHARD_SCRIPT_FILE   | Specify the file name which must be available on CUSTOM_SHARD_SCRIPT_DIR location to be executed after GSM setup.        | Optional            |
+| BASE_DIR                   | Specify BASE_DIR if you want to change the base location of the scripts to setup GSM.                                    | Optional            |
+| SCRIPT_NAME                | Specify the script name which will be executed from BASE_DIR. Default set to main.py.                                    | Optional            |
+| EXECUTOR                   | Specify the script executor such as /bin/python or /bin/bash. Default set to /bin/python.                                | Optional            |
 
 ## Support
 
-Oracle Globally Distributed Database on Docker is supported on Oracle Linux 7. 
+Oracle Globally Distributed Database on Docker is supported on Oracle Linux 7.
 Oracle Globally Distributed Database on Podman is supported on Oracle Linux 8 and onwards.
-
 
 ## License
 
@@ -614,8 +654,7 @@ To run Oracle Globally Distributed Database, regardless whether inside or outsid
 
 All scripts and files hosted in this project and GitHub docker-images/OracleDatabase repository required to build the Docker and Podman images are, unless otherwise noted, released under UPL 1.0 license.
 
-
 ## Copyright
 
 Copyright (c) 2022 - 2024 Oracle and/or its affiliates.
-Released under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl/
+Released under the Universal Permissive License v1.0 as shown at [https://oss.oracle.com/licenses/upl/](https://oss.oracle.com/licenses/upl/)
