@@ -1,6 +1,6 @@
 # Deploy Oracle Globally Distributed Database with User-Defined Sharding using Docker Containers
 
-This page covers the steps to manually deploy a sample Oracle Globally Distributed Database with User-Defined Sharding using Docker Containers. 
+This page covers the steps to manually deploy a sample Oracle Globally Distributed Database with User-Defined Sharding using Docker Containers.
 
 - [Setup Details](#setup-details)
 - [Prerequisites](#prerequisites)
@@ -18,7 +18,7 @@ This page covers the steps to manually deploy a sample Oracle Globally Distribut
   - [Create Directory for Standby GSM Container](#create-directory-for-standby-gsm-container)
   - [Create Standby GSM Container](#create-standby-gsm-container)
 - [Scale-out an existing Oracle Globally Distributed Database](#scale-out-an-existing-oracle-globally-distributed-database)
-  - [Complete the prerequisite steps before creating Docker Container for new shard](#complete-the-prerequisite-steps-before-creating-docker-container-for-new-shard) 
+  - [Complete the prerequisite steps before creating Docker Container for new shard](#complete-the-prerequisite-steps-before-creating-docker-container-for-new-shard)
   - [Create Docker Container for new shard](#create-docker-container-for-new-shard)
   - [Add the new shard Database to the existing Oracle Globally Distributed Database](#add-the-new-shard-database-to-the-existing-oracle-globally-distributed-database)
   - [Deploy the new shard](#deploy-the-new-shard)
@@ -34,17 +34,16 @@ This page covers the steps to manually deploy a sample Oracle Globally Distribut
 - [License](#license)
 - [Copyright](#copyright)
 
-
 ## Setup Details
 
 This setup involves deploying docker containers for:
 
-* Catalog Database
-* Two Shard Databases
-* Primary GSM 
-* Standby GSM
+- Catalog Database
+- Two Shard Databases
+- Primary GSM
+- Standby GSM
 
-**NOTE:** You can use Oracle 19c or Oracle 21c RDBMS and GSM Docker Images for this sample deployment. 
+**NOTE:** You can use Oracle 19c or Oracle 21c RDBMS and GSM Docker Images for this sample deployment.
 
 **NOTE:** In the current Sample Oracle Globally Distributed Database Deployment, we have used Oralce 21c RDBMS and GSM Docker Images.
 
@@ -69,8 +68,8 @@ chown -R 54321:54321 /scratch/oradata/dbfiles/CATALOG
 
 **Notes:**:
 
-* Change the ownership for data volume `/scratch/oradata/dbfiles/CATALOG` exposed to catalog container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
-* If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
+- Change the ownership for data volume `/scratch/oradata/dbfiles/CATALOG` exposed to catalog container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
+- If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
 
 ### Create Container
 
@@ -78,11 +77,11 @@ Before creating catalog container, review the following notes carefully:
 
 **Notes:**
 
-* Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
-* Change /scratch/oradata/dbfiles/CATALOG based on your enviornment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/scratch/oradata` based on ORACLE_SID enviornment variable.
-* If you are planing to perform seed cloning to expedite the Oracle Globally Distributed Database setup using existing cold DB backup, you need to replace `--name catalog oracle/database:21.3.0-ee` with `--name catalog oracle/database:21.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
-  * In this case,   /scratch/oradata/dbfiles/CATALOG` must contain the DB backup and it must not be in zipped format. E.g. `/scratch/oradata/dbfiles/CATALOG/SEEDCDB` where SEEDCDB is the cold backup and contains datafiles and PDB.
+- Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
+- Change /scratch/oradata/dbfiles/CATALOG based on your enviornment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/scratch/oradata` based on ORACLE_SID enviornment variable.
+- If you are planing to perform seed cloning to expedite the Oracle Globally Distributed Database setup using existing cold DB backup, you need to replace `--name catalog oracle/database:21.3.0-ee` with `--name catalog oracle/database:21.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
+  - In this case,   /scratch/oradata/dbfiles/CATALOG` must contain the DB backup and it must not be in zipped format. E.g. `/scratch/oradata/dbfiles/CATALOG/SEEDCDB` where SEEDCDB is the cold backup and contains datafiles and PDB.
 
 ```bash
 docker run -d --hostname oshard-catalog-0 \
@@ -111,8 +110,8 @@ docker logs -f catalog
 ```
 
 **IMPORTANT:** The Database Container Image used in this case is having the Oracle Database binaries installed. On first startup of the container, a new database will be created and the following lines highlight when the Catalog database is ready to be used:
-     
-```
+
+```bash
 ==============================================
       GSM Catalog Setup Completed
 ==============================================
@@ -120,7 +119,7 @@ docker logs -f catalog
 
 ## Deploying Shard Containers
 
-A database shard is a horizontal partition of data in a database or search engine. Each individual partition is referred to as a shard or database shard. You need to create mountpoint on docker host to save datafiles for Oracle Globally Distributed Database and expose as a volume to shard container. This volume can be local on a docker host or exposed from your central storage. It contains a file system such as EXT4. 
+A database shard is a horizontal partition of data in a database or search engine. Each individual partition is referred to as a shard or database shard. You need to create mountpoint on docker host to save datafiles for Oracle Globally Distributed Database and expose as a volume to shard container. This volume can be local on a docker host or exposed from your central storage. It contains a file system such as EXT4.
 
 For Example: During the setup of this README.md, we used `/scratch/oradata/dbfiles/ORCL1CDB` directory and exposed as volume to shard container `shard1`.
 
@@ -135,8 +134,8 @@ chown -R 54321:54321 /scratch/oradata/dbfiles/ORCL2CDB
 
 **Notes:**:
 
-* Change the ownership for data volume `/scratch/oradata/dbfiles/ORCL1CDB` and `/scratch/oradata/dbfiles/ORCL2CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
-* If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
+- Change the ownership for data volume `/scratch/oradata/dbfiles/ORCL1CDB` and `/scratch/oradata/dbfiles/ORCL2CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
+- If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
 
 ### Shard1 Container
 
@@ -144,11 +143,11 @@ Before creating shard1 container, review the following notes carefully:
 
 **Notes:**
 
-* Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
-* Change /scratch/oradata/dbfiles/ORCL1CDB based on your environment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/scratch/oradata` based on ORACLE_SID environment variable.
-* If you are planing to perform seed cloning to expedite the Oracle Globally Distributed Database setup using existing cold DB backup, you need to replace `--name shard1 oracle/database:21.3.0-ee` with `--name shard1 oracle/database:21.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
-  * In this case, `/scratch/oradata/dbfiles/ORCL1CDB` must contain the DB backup and it must not be zipped. E.g. `/scratch/oradata/dbfiles/ORCL1CDB/SEEDCDB` where `SEEDCDB` is the cold backup and contains datafiles and PDB.
+- Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
+- Change /scratch/oradata/dbfiles/ORCL1CDB based on your environment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/scratch/oradata` based on ORACLE_SID environment variable.
+- If you are planing to perform seed cloning to expedite the Oracle Globally Distributed Database setup using existing cold DB backup, you need to replace `--name shard1 oracle/database:21.3.0-ee` with `--name shard1 oracle/database:21.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
+  - In this case, `/scratch/oradata/dbfiles/ORCL1CDB` must contain the DB backup and it must not be zipped. E.g. `/scratch/oradata/dbfiles/ORCL1CDB/SEEDCDB` where `SEEDCDB` is the cold backup and contains datafiles and PDB.
 
 ```bash
 docker run -d --hostname oshard1-0 \
@@ -182,11 +181,11 @@ Before creating shard1 container, review the following notes carefully:
 
 **Notes:**
 
-* Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
-* Change /scratch/oradata/dbfiles/ORCL2CDB based on your environment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/scratch/oradata` based on ORACLE_SID environment variable.
-* If you are planing to perform seed cloning to expedite the Oracle Globally Distributed Database setup using existing cold DB backup, you need to replace `--name shard2 oracle/database:21.3.0-ee` with `--name shard2 oracle/database:21.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
-  * In this case, `/scratch/oradata/dbfiles/ORCL2CDB` must contain the DB backup and it must not be zipped. E.g. `/scratch/oradata/dbfiles/ORCL2CDB/SEEDCDB` where `SEEDCDB` is the cold backup and contains datafiles and PDB.
+- Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
+- Change /scratch/oradata/dbfiles/ORCL2CDB based on your environment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/scratch/oradata` based on ORACLE_SID environment variable.
+- If you are planing to perform seed cloning to expedite the Oracle Globally Distributed Database setup using existing cold DB backup, you need to replace `--name shard2 oracle/database:21.3.0-ee` with `--name shard2 oracle/database:21.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
+  - In this case, `/scratch/oradata/dbfiles/ORCL2CDB` must contain the DB backup and it must not be zipped. E.g. `/scratch/oradata/dbfiles/ORCL2CDB/SEEDCDB` where `SEEDCDB` is the cold backup and contains datafiles and PDB.
 
 ```bash
 docker run -d --hostname oshard2-0 \
@@ -222,7 +221,7 @@ docker logs -f shard2
 ==============================================
       GSM Shard Setup Completed
 ==============================================
-``` 
+```
 
 ## Deploying GSM Container
 
@@ -308,8 +307,7 @@ docker run -d --hostname oshard-gsm2 \
 --name gsm2 oracle/gsm:21.3.0
 ```
 
-**Notes:** 
-   Change environment variables such as DOMAIN, CATALOG_PARAMS, COMMON_OS_PWD_FILE and PWD_KEY according to your environment.
+**Notes:** Change environment variables such as DOMAIN, CATALOG_PARAMS, COMMON_OS_PWD_FILE and PWD_KEY according to your environment.
 
 To check the gsm2 container/services creation logs, please tail docker logs. It will take 2 minutes to create the gsm container service.
 
@@ -347,8 +345,8 @@ chown -R 54321:54321 /scratch/oradata/dbfiles/ORCL3CDB
 
 **Notes:**:
 
-* Change the ownership for data volume `/scratch/oradata/dbfiles/ORCL3CDB` and `/scratch/oradata/dbfiles/ORCL3CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
-* If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
+- Change the ownership for data volume `/scratch/oradata/dbfiles/ORCL3CDB` and `/scratch/oradata/dbfiles/ORCL3CDB` exposed to shard container as it has to be writable by oracle "oracle" (uid: 54321) user inside the container.
+- If this is not changed then database creation will fail. For details, please refer, [oracle/docker-images for Single Instance Database](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance).
 
 ### Create Docker Container for new shard
 
@@ -356,11 +354,11 @@ Before creating new shard (shard3 in this case) container, review the following 
 
 **Notes:**
 
-* Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
-* Change /scratch/oradata/dbfiles/ORCL3CDB based on your environment.
-* By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/scratch/oradata` based on ORACLE_SID environment variable.
-* If you are planing to perform seed cloning to expedite the Oracle Globally Distributed Database setup using existing cold DB backup, you need to replace `--name shard3 oracle/database:21.3.0-ee` with `--name shard3 oracle/database:21.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
-  * In this case, `/scratch/oradata/dbfiles/ORCL3CDB` must contain the DB backup and it must not be zipped. E.g. `/scratch/oradata/dbfiles/ORCL3CDB/SEEDCDB` where `SEEDCDB` is the cold backup and contains datafiles and PDB.
+- Change environment variable such as ORACLE_SID, ORACLE_PDB based on your env.
+- Change /scratch/oradata/dbfiles/ORCL3CDB based on your environment.
+- By default, Oracle Globally Distributed Database setup creates new database under `/opt/oracle/scratch/oradata` based on ORACLE_SID environment variable.
+- If you are planing to perform seed cloning to expedite the Oracle Globally Distributed Database setup using existing cold DB backup, you need to replace `--name shard3 oracle/database:21.3.0-ee` with `--name shard3 oracle/database:21.3.0-ee /opt/oracle/scripts/setup/runOraShardSetup.sh`
+  - In this case, `/scratch/oradata/dbfiles/ORCL3CDB` must contain the DB backup and it must not be zipped. E.g. `/scratch/oradata/dbfiles/ORCL3CDB/SEEDCDB` where `SEEDCDB` is the cold backup and contains datafiles and PDB.
 
 ```bash
 docker run -d --hostname oshard3-0 \
@@ -399,11 +397,13 @@ docker logs -f shard3
 ### Add the new shard Database to the existing Oracle Globally Distributed Database
 
 Use the below command to add the new shard3:
+
 ```bash
 docker exec -it gsm1 python /opt/oracle/scripts/sharding/scripts/main.py --addshard="shard_host=oshard3-0;shard_db=ORCL3CDB;shard_pdb=ORCL3PDB;shard_port=1521;shard_space=shardspace3;shard_region=region1"
 ```
 
 Use the below command to check the status of the newly added shard:
+
 ```bash
 docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config shard
 ```
@@ -417,6 +417,7 @@ docker exec -it gsm1 python /opt/oracle/scripts/sharding/scripts/main.py --deplo
 ```
 
 Use the below command to check the status of the newly added shard and the chunks distribution:
+
 ```bash
 docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config shard
 
@@ -432,11 +433,13 @@ docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2
 ```
 
 Example: If you want to move the chunk with chunk id `3` from source shard `ORCL1CDB_ORCL1PDB` to target shard `ORCL3CDB_ORCL3PDB`, then you can use the below command:
+
 ```bash
 docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl MOVE CHUNK -CHUNK 3 -SOURCE ORCL1CDB_ORCL1PDB -TARGET ORCL3CDB_ORCL3PDB
 ```
 
 Use the below command to check the status of the chunks distribution:
+
 ```bash
 docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config chunks
 ```
@@ -450,16 +453,15 @@ If you want to Scale-in an existing Oracle Globally Distributed Database by remo
 - Delete the shard database from the Oracle Globally Distributed Database
 - Confirm the shard has been successfully deleted from the Oracle Globally Distributed Database
 
-
 ### Confirm the shard to be deleted is present in the list of shards in the Oracle Globally Distributed Database
 
 Use the below commands to check the status of the shard which you want to delete and status of chunks present in this shard:
+
 ```bash
 docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config shard
 
 docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config chunks
 ```
-
 
 ### Move the chunks out of the shard database which you want to delete
 
@@ -470,6 +472,7 @@ docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2
 ```
 
 Example: If you want to move the chunk with chunk id `3` from source shard `ORCL3CDB_ORCL3PDB` to target shard `ORCL1CDB_ORCL1PDB`, then you can use the below command:
+
 ```bash
 docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl MOVE CHUNK -CHUNK 3 -SOURCE ORCL3CDB_ORCL3PDB -TARGET ORCL1CDB_ORCL1PDB
 ```
@@ -477,12 +480,12 @@ docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2
 **NOTE:** To move more than 1 chunk, you can specify comma separated chunk ids.
 
 After moving the chunks out, use the below command to confirm there is no chunk present in the shard database which you want to delete:
+
 ```bash
 docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2 | tr -d '\r')/bin/gdsctl config chunks
 ```
 
-**NOTE:** You will need to wait for some time for all the chunks to move out of the shard database which you want to delete. 
-
+**NOTE:** You will need to wait for some time for all the chunks to move out of the shard database which you want to delete.
 
 ### Delete the shard database from the Oracle Globally Distributed Database
 
@@ -506,29 +509,32 @@ docker exec -it gsm1 $(docker exec -it gsm1 env | grep ORACLE_HOME | cut -d= -f2
 
 ### Remove the Docker Container
 
-Once the shard is deleted from the Oracle Globally Distributed Database, you can remove the Docker Container which was deployed earlier for the deleted shard database. 
+Once the shard is deleted from the Oracle Globally Distributed Database, you can remove the Docker Container which was deployed earlier for the deleted shard database.
 
 If the deleted shard was `shard3`, to remove its Docker Container, please use the below steps:
 
 - Stop and remove the Docker Container for shard3:
+
 ```bash
 docker stop shard3
 docker rm shard3
 ```
 
 - Remove the directory containing the files for this deleted Docker Container:
+
 ```bash
 rm -rf /scratch/oradata/dbfiles/ORCL3CDB
 ```
+
 ## Environment Variables Explained
 
-**For Catalog and Shard Containers**-
+**For Catalog and Shard Containers:**
 
 | Mandatory Parameters      | Description                                                                                               |
 |---------------------------|-----------------------------------------------------------------------------------------------------------|
-| COMMON_OS_PWD_FILE        | Specify the encrypted password file to be read inside the container                                      |
-| PWD_KEY                   | Specify password key file to decrypt the encrypted password file and read the password                   |
-| OP_TYPE                   | Specify the operation type. For Shards it has to be set to catalog or primaryshard/standbyshard          |
+| COMMON_OS_PWD_FILE        | Specify the encrypted password file to be read inside the container                                       |
+| PWD_KEY                   | Specify password key file to decrypt the encrypted password file and read the password                    |
+| OP_TYPE                   | Specify the operation type. For Shards it has to be set to catalog or primaryshard/standbyshard           |
 | DOMAIN                    | Specify the domain name                                                                                   |
 | ORACLE_SID                | CDB name                                                                                                  |
 | ORACLE_PDB                | PDB name                                                                                                  |
@@ -538,60 +544,58 @@ rm -rf /scratch/oradata/dbfiles/ORCL3CDB
 | CUSTOM_SHARD_SCRIPT_DIR   | Specify the location of custom scripts that you want to run after setting up the catalog or shard setup   |
 | CUSTOM_SHARD_SCRIPT_FILE  | Specify the file name which must be available on CUSTOM_SHARD_SCRIPT_DIR location to be executed          |
 | CLONE_DB                  | Specify value "true" if you want to avoid db creation and clone it from cold backup of existing Oracle DB |
-| OLD_ORACLE_SID            | Specify the OLD_ORACLE_SID if you are performing db seed clonging using existing cold backup of Oracle DB  |
+| OLD_ORACLE_SID            | Specify the OLD_ORACLE_SID if you are performing db seed clonging using existing cold backup of Oracle DB |
 | OLD_ORACLE_PDB            | Specify the OLD_ORACLE_PDB if you are performing db seed cloning using existing cold backup of Oracle DB  |
 
+**For GSM Containers:**
 
-**For GSM Containers**-
+| Mandatory Parameters            | Description                                                                                                                            |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| SHARD_DIRECTOR_PARAMS           | Accepts key=value pairs for shard director configuration.                                                                              |
+|                                 |   - director_name: Shard director name                                                                                                 |
+|                                 |   - director_region: Shard director region                                                                                             |
+|                                 |   - director_port: Shard director port                                                                                                 |
+| SHARD[1-9]_GROUP_PARAMS         | Accepts key=value pairs for shard group configuration.                                                                                 |
+|                                 |   - group_name: Shard group name                                                                                                       |
+|                                 |   - deploy_as: Deploy shard group as primary or active_standby                                                                         |
+|                                 |   - group_region: Shard group region name                                                                                              |
+| CATALOG_PARAMS                  | Accepts key=value pairs for catalog configuration.                                                                                     |
+|                                 |   - catalog_host: Catalog hostname                                                                                                     |
+|                                 |   - catalog_db: Catalog CDB name                                                                                                       |
+|                                 |   - catalog_pdb: Catalog PDB name                                                                                                      |
+|                                 |   - catalog_port: Catalog DB port name                                                                                                 |
+|                                 |   - catalog_name: Catalog name in GSM                                                                                                  |
+|                                 |   - catalog_region: Comma-separated region name for catalog DB deployment                                                              |
+| SHARD[1-9]_PARAMS               | Accepts key=value pairs for shard configuration.                                                                                       |
+|                                 |   - shard_host: Shard hostname                                                                                                         |
+|                                 |   - shard_db: Shard CDB name                                                                                                           |
+|                                 |   - shard_pdb: Shard PDB name                                                                                                          |
+|                                 |   - shard_port: Shard DB port                                                                                                          |
+|                                 |   - shard_group: Shard group name                                                                                                      |
+| SERVICE[1-9]_PARAMS             | Accepts key=value pairs for service configuration.                                                                                     |
+|                                 |   - service_name: Service name                                                                                                         |
+|                                 |   - service_role: Service role (e.g., primary or physical_standby)                                                                     |
+| COMMON_OS_PWD_FILE              | Specifies the encrypted password file to be read inside the container.                                                                 |
+| PWD_KEY                         | Specifies the password key file to decrypt the encrypted password file and read the password.                                          |
+| OP_TYPE                         | Specifies the operation type. For GSM, it has to be set to gsm.                                                                        |
+| DOMAIN                          | Specifies the domain of the container.                                                                                                 |
+| MASTER_GSM                      | Set to "TRUE" if you want the GSM to be a master GSM; otherwise, do not set it.                                                        |
 
-| Mandatory Parameters            | Description                                                                                                 |
-|---------------------------------|-------------------------------------------------------------------------------------------------------------|
-| SHARD_DIRECTOR_PARAMS           | Accepts key=value pairs for shard director configuration.                                                   |
-|                                 |   - director_name: Shard director name                                                                      |
-|                                 |   - director_region: Shard director region                                                                  |
-|                                 |   - director_port: Shard director port                                                                      |
-| SHARD[1-9]_GROUP_PARAMS         | Accepts key=value pairs for shard group configuration.                                                       |
-|                                 |   - group_name: Shard group name                                                                            |
-|                                 |   - deploy_as: Deploy shard group as primary or active_standby                                              |
-|                                 |   - group_region: Shard group region name                                                                   |
-| CATALOG_PARAMS                  | Accepts key=value pairs for catalog configuration.                                                           |
-|                                 |   - catalog_host: Catalog hostname                                                                          |
-|                                 |   - catalog_db: Catalog CDB name                                                                             |
-|                                 |   - catalog_pdb: Catalog PDB name                                                                            |
-|                                 |   - catalog_port: Catalog DB port name                                                                      |
-|                                 |   - catalog_name: Catalog name in GSM                                                                        |
-|                                 |   - catalog_region: Comma-separated region name for catalog DB deployment                                   |
-| SHARD[1-9]_PARAMS               | Accepts key=value pairs for shard configuration.                                                             |
-|                                 |   - shard_host: Shard hostname                                                                              |
-|                                 |   - shard_db: Shard CDB name                                                                                |
-|                                 |   - shard_pdb: Shard PDB name                                                                                |
-|                                 |   - shard_port: Shard DB port                                                                                |
-|                                 |   - shard_group: Shard group name                                                                           |
-| SERVICE[1-9]_PARAMS             | Accepts key=value pairs for service configuration.                                                           |
-|                                 |   - service_name: Service name                                                                              |
-|                                 |   - service_role: Service role (e.g., primary or physical_standby)                                          |
-| COMMON_OS_PWD_FILE              | Specifies the encrypted password file to be read inside the container.                                      |
-| PWD_KEY                         | Specifies the password key file to decrypt the encrypted password file and read the password.               |
-| OP_TYPE                         | Specifies the operation type. For GSM, it has to be set to gsm.                                              |
-| DOMAIN                          | Specifies the domain of the container.                                                                      |
-| MASTER_GSM                      | Set to "TRUE" if you want the GSM to be a master GSM; otherwise, do not set it.                              |
-
-| Optional Parameters             | Description                                                                                                 |
-|---------------------------------|-------------------------------------------------------------------------------------------------------------|
-| GSM_TRACE_LEVEL                 | Specify tacing level for the GSM(Specify USER or ADMIN or SUPPORT or OFF, default value as OFF)             |
-| SAMPLE_SCHEMA                   | Specify a value to "DEPLOY" if you want to deploy a sample app schema in the catalog DB during GSM setup.   |
-| CUSTOM_SHARD_SCRIPT_DIR         | Specify the location of custom scripts that you want to run after setting up GSM.                           |
-| CUSTOM_SHARD_SCRIPT_FILE        | Specify the filename that must be available on CUSTOM_SHARD_SCRIPT_DIR location to be executed after GSM setup. |
+| Optional Parameters             | Description                                                                                                                            |
+|---------------------------------|-------------------------------------------------------------------------------------------------------------                           |
+| GSM_TRACE_LEVEL                 | Specify tacing level for the GSM(Specify USER or ADMIN or SUPPORT or OFF, default value as OFF)                                        |
+| SAMPLE_SCHEMA                   | Specify a value to "DEPLOY" if you want to deploy a sample app schema in the catalog DB during GSM setup.                              |
+| CUSTOM_SHARD_SCRIPT_DIR         | Specify the location of custom scripts that you want to run after setting up GSM.                                                      |
+| CUSTOM_SHARD_SCRIPT_FILE        | Specify the filename that must be available on CUSTOM_SHARD_SCRIPT_DIR location to be executed after GSM setup.                        |
 | BASE_DIR                        | Specify BASE_DIR if you want to change the base location of the scripts to set up GSM. Default is set to $INSTALL_DIR/startup/scripts. |
-| SCRIPT_NAME                     | Specify the script name which will be executed from BASE_DIR. Default set to main.py.                       |
-| EXECUTOR                        | Specify the script executor such as /bin/python or /bin/bash. Default set to /bin/python.                  |
-| CATALOG_SETUP                   | Accepts True. If set, it will only restrict till catalog connection and setup.                               |
-| CATALOG_PARAMS                  | Accepts key-value pairs for catalog configuration. Refer to the Mandatory Parameters section.              |
-
+| SCRIPT_NAME                     | Specify the script name which will be executed from BASE_DIR. Default set to main.py.                                                  |
+| EXECUTOR                        | Specify the script executor such as /bin/python or /bin/bash. Default set to /bin/python.                                              |
+| CATALOG_SETUP                   | Accepts True. If set, it will only restrict till catalog connection and setup.                                                         |
+| CATALOG_PARAMS                  | Accepts key-value pairs for catalog configuration. Refer to the Mandatory Parameters section.                                          |
 
 ## Support
 
-Oracle Globally Distributed Database on Docker is supported on Oracle Linux 7. 
+Oracle Globally Distributed Database on Docker is supported on Oracle Linux 7.
 Oracle Globally Distributed Database on Podman is supported on Oracle Linux 8 and onwards.
 
 ## License
@@ -603,4 +607,4 @@ All scripts and files hosted in this project and GitHub docker-images/OracleData
 ## Copyright
 
 Copyright (c) 2022 - 2024 Oracle and/or its affiliates.
-Released under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl/
+Released under the Universal Permissive License v1.0 as shown at [https://oss.oracle.com/licenses/upl/](https://oss.oracle.com/licenses/upl/)

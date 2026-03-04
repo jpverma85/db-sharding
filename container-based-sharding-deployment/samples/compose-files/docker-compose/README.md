@@ -12,8 +12,8 @@ This document provides an example of how to use `docker-compose` to create the D
 - [Step 6: Remove the deployment](#remove-the-deployment)
 - [Copyright](#copyright)
 
-
 ## Install Docker Compose
+
 ```bash
 DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
 mkdir -p $DOCKER_CONFIG/cli-plugins
@@ -58,18 +58,19 @@ chmod 400 /opt/.secrets/key.pem
 chmod 400 /opt/.secrets/key.pub
 ```
 
-## Create Docker Compose file 
+## Create Docker Compose file
 
 Copy a Docker Compose file named [docker-compose.yaml](./docker-compose.yml) in your working directory.
 
-
 ## Create services using "docker compose" command
+
 After you have successfully completed the prerequisties for deployment, run these commands to create the services:
+
 ```bash
 # Switch to location with the `docker-compose.yaml` file and run:
  
 docker compose up -d
-``` 
+```
 
 ## Check the logs
 
@@ -80,7 +81,8 @@ docker compose logs -f
 ```
 
 Wait for all the Docker setup processes to complete, and each component indicates that it is up and ready. For example:
-```
+
+```bash
 # docker compose up -d
 [+] Running 6/6
  ✔ Container pcatalog  Healthy                                                                                                                                                                                                                                           0.0s
@@ -105,4 +107,4 @@ docker-compose down
 ## Copyright
 
 Copyright (c) 2022, 2024 Oracle and/or its affiliates.
-Released under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl/
+Released under the Universal Permissive License v1.0 as shown at [https://oss.oracle.com/licenses/upl/](https://oss.oracle.com/licenses/upl/)

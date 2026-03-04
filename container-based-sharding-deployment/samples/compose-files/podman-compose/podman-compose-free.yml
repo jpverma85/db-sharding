@@ -121,33 +121,6 @@ services:
     networks:
       shard_pub1_nw:
         ipv4_address: ${LOCAL_NETWORK}.105
-  shard4_db:
-    container_name: ${SHARD4_CONTAINER_NAME}
-    privileged: ${CONTAINER_PRIVILEGED_FLAG}
-    hostname: ${SHARD4_HOSTNAME}
-    image: ${SIDB_IMAGE}
-    dns_search: ${DNS_SEARCH}
-    restart: ${CONTAINER_RESTART_POLICY}
-    secrets:
-      - pwdsecret
-      - keysecret
-    volumes:
-      - ${PODMANVOLLOC}/dbfiles/ORCL4CDB:/opt/oracle/oradata
-      - /opt/containers/shard_host_file:/etc/hosts
-    environment:
-      SHARD_SETUP: ${SHARD4_SHARD_SETUP}
-      DOMAIN: ${DOMAIN}
-      ORACLE_SID: ${SHARD4_SID}
-      ORACLE_PDB: ${SHARD4_PDB"}
-      ORACLE_FREE_PDB: ${SHARD4_FREE_PDB}
-      DB_UNIQUE_NAME: ${SHARD4_CDB}
-      OP_TYPE: ${ALLSHARD_OP_TYPE}
-      COMMON_OS_PWD_FILE: pwdsecret
-      PWD_KEY: keysecret
-      ENABLE_ARCHIVELOG: ${SHARD_ARCHIVELOG}
-    networks:
-      shard_pub1_nw:
-        ipv4_address: ${LOCAL_NETWORK}.106
   primary_gsm:
     container_name: ${PRIMARY_GSM_CONTAINER_NAME}
     privileged: ${CONTAINER_PRIVILEGED_FLAG}
@@ -169,7 +142,6 @@ services:
       SHARD1_PARAMS: ${PRIMARY_SHARD1_PARAMS}
       SHARD2_PARAMS: ${PRIMARY_SHARD2_PARAMS}
       SHARD3_PARAMS: ${STANDBY_SHARD3_PARAMS}
-      SHARD4_PARAMS: ${STANDBY_SHARD4_PARAMS}
       SERVICE1_PARAMS: ${PRIMARY_SERVICE1_PARAMS}
       SERVICE2_PARAMS: ${PRIMARY_SERVICE2_PARAMS}
       COMMON_OS_PWD_FILE: pwdsecret
@@ -201,7 +173,6 @@ services:
       SHARD1_PARAMS: ${STANDBY_SHARD1_PARAMS}
       SHARD2_PARAMS: ${STANDBY_SHARD2_PARAMS}
       SHARD3_PARAMS: ${STANDBY_SHARD3_PARAMS}
-      SHARD4_PARAMS: ${STANDBY_SHARD4_PARAMS}
       SERVICE1_PARAMS: ${STANDBY_SERVICE1_PARAMS}
       SERVICE2_PARAMS: ${STANDBY_SERVICE2_PARAMS}
       COMMON_OS_PWD_FILE: pwdsecret

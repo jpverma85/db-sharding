@@ -16,12 +16,9 @@ Docker is used on Oracle Linux 7 Host Machines to create containers. This docume
 - [License](#license)
 - [Copyright](#copyright)
 
-
-
 ## Prerequisites
 
-You must complete all of the prerequisites before deploying an Oracle Globally Distributed Database using Docker Containers. These prerequisites include creating the Docker network, creating the encrypted file with secrets, and other steps required before deployment. 
-
+You must complete all of the prerequisites before deploying an Oracle Globally Distributed Database using Docker Containers. These prerequisites include creating the Docker network, creating the encrypted file with secrets, and other steps required before deployment.
 
 ### Create Network Bridge
 
@@ -96,6 +93,7 @@ vi /opt/.secrets/pwdfile.txt
 **Note**: Enter your secure password in the above file and save the file.
 
 After seeding password and saving the `/opt/.secrets/pwdfile.txt` file, run the following command:
+
 ```bash
 openssl pkeyutl -in /opt/.secrets/pwdfile.txt -out /opt/.secrets/pwdfile.enc -pubin -inkey /opt/.secrets/key.pub -encrypt
 rm -f /opt/.secrets/pwdfile.txt
@@ -121,7 +119,6 @@ Refer to [Sample Oracle Globally Distributed Database with System-Managed Shardi
 
 Refer to [Sample Oracle Globally Distributed Database with User-Defined Sharding deployed manually using Docker Containers](./docker-sharded-database-with-user-defined-sharding.md) to deploy a sample Oracle Globally Distributed Database with User-Defined sharding using Docker containers.
 
-
 ## Support
 
 Oracle 19c or Oracle 23ai GSM and RDBMS is supported for Oracle Linux 7.
@@ -135,4 +132,4 @@ All scripts and files hosted in this project and GitHub docker-images/OracleData
 ## Copyright
 
 Copyright (c) 2022, 2024 Oracle and/or its affiliates.
-Released under the Universal Permissive License v1.0 as shown at https://oss.oracle.com/licenses/upl/
+Released under the Universal Permissive License v1.0 as shown at [https://oss.oracle.com/licenses/upl/](https://oss.oracle.com/licenses/upl/)
